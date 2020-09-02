@@ -2,47 +2,42 @@ import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
 import exampleVideoData from '../data/exampleVideoData.js';
 
-//import exampleVideoData from './data/exampleVideoData.js';
-
-
-// var App = () => (
-//   <div>
-//     <nav className="navbar">
-//       <div className="col-md-6 offset-md-3">
-//         <div><h5><em>search</em> view goes here</h5></div>
-//       </div>
-//     </nav>
-//     <div className="row">
-//       <div className="col-md-7">
-//         <VideoPlayer video={exampleVideoData[0]}/>
-//       </div>
-//       <div className="col-md-5">
-//         <VideoList videos={exampleVideoData}/>
-//       </div>
-//     </div>
-//   </div>
-// );
-
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.clickListener = this.clickListener.bind(this);
     this.state = {
-      done: false,
-      //videoClicked: props.videos[0]
+      videos: exampleVideoData,
+      videoClicked: exampleVideoData[0],
+
     };
   }
 
-  // clickListener() {
-  //   this.setState({
-  //     done: !this.state.done,
-  //     videoClicked:
-  //   });
-  // }
+  componentDidMount() {
+    this.getYouTubeVideos('rick astley');
+  }
 
-  //click listener function
-  //this.setState({
-  // done:!this.state.done
-  //});
+  getYouTubeVideos(query) {
+    var options = {
+      key: this.props.API_KEY,
+      query: query
+    };
+
+
+    this.props.searchYouTube(options, (videos) => {
+      this.setState({
+        videos: videos,
+        currentVideo: videos[0]
+      });
+    });
+  }
+
+  clickListener(video) {
+    this.setState({
+      videoClicked: video
+    });
+  }
+
 
   render() {
     return <div>
@@ -53,10 +48,12 @@ class App extends React.Component {
       </nav>
       <div className="row">
         <div className="col-md-7">
-          <VideoPlayer video={exampleVideoData[0]}/>
+          <VideoPlayer video={this.state.videoClicked}/>
         </div>
         <div className="col-md-5">
-          <VideoList videos={exampleVideoData}/>
+          <VideoList videos={this.state.videos}
+            clickListener = {this.clickListener}
+          />
         </div>
       </div>
     </div>;
