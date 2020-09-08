@@ -1,6 +1,8 @@
 import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
 import exampleVideoData from '../data/exampleVideoData.js';
+import Nav from './Nav.js';
+import Search from './Search.js';
 
 class App extends React.Component {
   constructor(props) {
@@ -8,7 +10,7 @@ class App extends React.Component {
     this.clickListener = this.clickListener.bind(this);
     this.state = {
       videos: exampleVideoData,
-      videoClicked: exampleVideoData[0],
+      videoClicked: exampleVideoData[0] //current vid?
 
     };
   }
@@ -23,11 +25,11 @@ class App extends React.Component {
       query: query
     };
 
-
-    this.props.searchYouTube(options, (videos) => {
+    var MyToggleDebounced = _.debounce(this.props.searchYouTube, 500);
+    MyToggleDebounced(options, (videos) => {
       this.setState({
         videos: videos,
-        currentVideo: videos[0]
+        videoClicked: videos[0]
       });
     });
   }
@@ -41,11 +43,7 @@ class App extends React.Component {
 
   render() {
     return <div>
-      <nav className="navbar">
-        <div className="col-md-6 offset-md-3">
-          <div><h5><em>search</em> view goes here</h5></div>
-        </div>
-      </nav>
+      <Nav handleSearchInputChange={this.getYouTubeVideos.bind(this)}/>
       <div className="row">
         <div className="col-md-7">
           <VideoPlayer video={this.state.videoClicked}/>
